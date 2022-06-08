@@ -41,4 +41,5 @@ export async function main(ns) {
 
     var totalThreads = weakenHackThreads+weakenGrowThreads+growThreads+hackThreads;
     ns.tprint(`total threads: ${totalThreads}`);
+    ns.tprint(`runtime: ${Math.ceil(ns.getWeakenTime(target)/1000)}s`);
 }

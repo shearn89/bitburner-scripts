@@ -6,6 +6,7 @@ export async function main(ns) {
 	targets = ns.getPurchasedServers();
 
 	var script = ns.args[0];
+	var value = ns.args[1];
 	var total = 0;
 	for (let target of targets) {
 		ns.print("target is:", target);
@@ -16,4 +17,5 @@ export async function main(ns) {
 		}
 	}
 	ns.tprint("total threads: ", total);
+	ns.tprint(`can run ${Math.floor(total/value)} batches`);
 }
