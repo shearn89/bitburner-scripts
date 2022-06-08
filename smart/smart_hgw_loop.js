@@ -37,12 +37,12 @@ export async function main(ns) {
             var delays = get_delays(ns, target);
 
             await batch_run(ns, target, scripts, counts, delays, i);
-            var sleepTime = weakenTime/batchSet;
-            ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime/1000)}s, sleep time: ${sleepTime}`);
-            await ns.sleep(sleepTime);
+            ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime/1000)}s`);
+            await ns.sleep(250);
         }
-        ns.tprint("launched batchset");
-        await ns.sleep(2000);
+        var sleepTime = ns.getWeakenTime(target)-(250*batchSet)+5000;
+        ns.printf(`launched batchset, sleeping for ${Math.ceil(sleepTime/1000)}s`);
         setCount += 1;
+        await ns.sleep(sleepTime);
     }
 }
