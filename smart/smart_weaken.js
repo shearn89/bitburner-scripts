@@ -11,12 +11,13 @@ export async function main(ns) {
         ns.toast("must provide target");
     }
 
-    var weakenThreads = get_weaken_threads
+    var weakenThreads = get_weaken_threads(ns, target);
     var scripts = [weakenScript];
     var counts = [weakenThreads];
     var delays = [0];
+    var weakenTime = ns.getWeakenTime(target);
 
-    ns.tprint("starting batch_run");
+    ns.tprint(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
     await batch_run(ns, target, scripts, counts, delays);
     ns.toast("launched smart_weaken");
 }

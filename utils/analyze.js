@@ -8,17 +8,19 @@ export async function main(ns) {
     var weakenDecrease = 0.05;
 
     if (!targetAmount) {
-        targetAmount = 50;
+        targetAmount = 0.5;
     }
 
     var max = ns.getServerMaxMoney(target);
-    var cash = ns.getServerMoneyAvailable(target);
-    ns.tprint(`cash: ${cash}, max: ${max}`)
+    var cash = Math.floor(ns.getServerMoneyAvailable(target));
+    ns.tprint(`cash: ${cash}, max: ${max}, delta: ${max-cash}`)
+    var securityLevel = ns.getServerSecurityLevel(target);
+    ns.tprint(`sec level: ${securityLevel}`);
 
     var moneyPerThread = ns.hackAnalyze(target);
     var hackThreads = Math.floor(targetAmount/moneyPerThread);
 
-    var growChange = (100-targetAmount)/100
+    var growChange = 1-targetAmount
     var resultAmount = max/(max*growChange)
     var growThreads = Math.ceil(ns.growthAnalyze(target, resultAmount));
 
@@ -35,7 +37,7 @@ export async function main(ns) {
     ns.tprint(`weaken grow threads: ${weakenGrowThreads}`);
 
     ns.tprint("grow threads:", growThreads);
-    ns.tprint(`${targetAmount}% hack threads: ${hackThreads}`);
+    ns.tprint(`${targetAmount*100}% hack threads: ${hackThreads}`);
 
     var totalThreads = weakenHackThreads+weakenGrowThreads+growThreads+hackThreads;
     ns.tprint(`total threads: ${totalThreads}`);

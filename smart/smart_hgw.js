@@ -42,7 +42,7 @@ export async function main(ns) {
     var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
     var delays = [weakenDelay, weakenGrowDelay, growDelay, hackDelay];
 
-    ns.tprint("starting batch_run");
+    ns.tprint(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
     await batch_run(ns, target, scripts, counts, delays);
     ns.toast("launched smart_hgw");
 }
