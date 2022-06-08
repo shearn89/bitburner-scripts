@@ -12,6 +12,7 @@ export async function main(ns) {
     var target = ns.args[0];
     var percentage = ns.args[1];
     var batchSet = ns.args[2];
+    var setLimit = ns.args[3];
     if (!target) {
         ns.alert("must provide target");
     }
@@ -21,8 +22,12 @@ export async function main(ns) {
     if (!batchSet) {
         ns.alert("must provide batch size");
     }
+    if (!setLimit) {
+        setLimit = Infinity;
+    }
 
-    while(true) {
+    var setCount = 0;
+    while(setLimit > setCount) {
         for (var i=0; i<batchSet; i++) {
             var {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
             var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target, percentage);
@@ -38,6 +43,6 @@ export async function main(ns) {
         }
         ns.tprint("launched batchset");
         await ns.sleep(2000);
-        break;
+        setCount += 1;
     }
 }
