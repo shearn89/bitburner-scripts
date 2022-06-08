@@ -24,7 +24,7 @@ export async function main(ns) {
     ns.tprint(`hackThreads: ${hackThreads}`)
     ns.tprint(`weaken hackThreads: ${weakenHackThreads}`)
 
-    var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target);
+    var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target, percentage);
     ns.tprint(`growThreads: ${growThreads}`)
     ns.tprint(`weaken grow threads: ${weakenGrowThreads}`);
 
@@ -44,5 +44,5 @@ export async function main(ns) {
 
     ns.tprint("starting batch_run");
     await batch_run(ns, target, scripts, counts, delays);
-    ns.toast("launched");
+    ns.toast("launched smart_hgw");
 }
