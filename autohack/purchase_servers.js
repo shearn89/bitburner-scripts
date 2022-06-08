@@ -6,7 +6,6 @@ export async function main(ns) {
 
 	while (true) {
 		var servers = ns.getPurchasedServers();
-		var cash = ns.getServerMoneyAvailable("home");
 
 		var factor = ns.read(dataFile);
 		if ("" == factor) {
@@ -15,6 +14,7 @@ export async function main(ns) {
 		}
 
 		while (servers.length < limit) {
+			var cash = ns.getServerMoneyAvailable("home");
 			var ram = Math.pow(2, factor);
 			var purchaseCost = ns.getPurchasedServerCost(ram);
 			if (purchaseCost <= cash) {

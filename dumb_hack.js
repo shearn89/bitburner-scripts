@@ -1,4 +1,4 @@
-var target = "crush-fitness";
+var target = "johnson-ortho";
 
 /** @param {NS} ns */
 export async function main(ns) {

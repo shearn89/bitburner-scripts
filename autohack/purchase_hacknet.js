@@ -75,6 +75,6 @@ export async function main(ns) {
 			nodeCount = ns.hacknet.numNodes();
 		}
 
-		await ns.sleep(1000*60*5);
+		await ns.sleep(1000*60*15);
 	}
 }
