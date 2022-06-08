@@ -4,6 +4,13 @@ export async function main(ns) {
     var target = ns.args[0];
     var targetAmount = ns.args[1];
 
+    if (!target) {
+        target = "crush-fitness";
+    }
+    if (!targetAmount) {
+        targetAmount = 10;
+    }
+
     var growIncrease = 0.004;
     var hackIncrease = 0.002;
     var weakenDecrease = 0.05;
@@ -52,8 +59,6 @@ export async function main(ns) {
     var growDelay = (weakTime+buffer)-growTime;
     var hackDelay = (weakTime-buffer)-hackTime;
 
-    var processMap = {};
-
     var scripts = [weakenScript, weakenScript, growScript, hackScript];
     var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
     var delays = [0, weakDelay, growDelay, hackDelay];
@@ -63,9 +68,13 @@ export async function main(ns) {
     var worker = workers.pop();
     ns.tprint("starting loop");
     while(worker) {
-        if (iterator > scripts.length) {
+        if (iterator >= scripts.length) {
             break;
         }
+        if (!ns.fileExists(scripts[iterator], worker)) {
+            await ns.scp(scripts[iterator], worker);
+        }
+
         var freeRam = ns.getServerMaxRam(worker)-ns.getServerUsedRam(worker);
         ns.tprint(`server ${worker} has ${freeRam} RAM free`);
         var serverBatches = Math.floor(freeRam/ns.getScriptRam(scripts[iterator]));

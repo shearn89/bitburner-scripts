@@ -7,6 +7,10 @@ export async function main(ns) {
     var hackIncrease = 0.002;
     var weakenDecrease = 0.05;
 
+    if (!targetAmount) {
+        targetAmount = 50;
+    }
+
     var max = ns.getServerMaxMoney(target);
 
     var moneyPerThread = ns.hackAnalyze(target);
