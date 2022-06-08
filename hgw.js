@@ -8,7 +8,7 @@ export async function main(ns) {
         target = "crush-fitness";
     }
     if (!targetAmount) {
-        targetAmount = 10;
+        targetAmount = 50;
     }
 
     var growIncrease = 0.004;
