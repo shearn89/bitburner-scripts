@@ -12,6 +12,8 @@ export async function main(ns) {
     }
 
     var max = ns.getServerMaxMoney(target);
+    var cash = ns.getServerMoneyAvailable(target);
+    ns.tprint(`cash: ${cash}, max: ${max}`)
 
     var moneyPerThread = ns.hackAnalyze(target);
     var hackThreads = Math.floor(targetAmount/moneyPerThread);

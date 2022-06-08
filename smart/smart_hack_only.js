@@ -16,7 +16,7 @@ export async function main(ns) {
         ns.toast("must provide percentage");
     }
 
-    var hackThreads = get_hack_threads(ns, target, percentage);
+    var {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
 
     var scripts = [hackScript];
     var counts = [hackThreads];

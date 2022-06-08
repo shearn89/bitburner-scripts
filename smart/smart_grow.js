@@ -15,8 +15,6 @@ export async function main(ns) {
     }
 
     var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target);
-    ns.tprint(`growThreads: ${growThreads}`)
-    ns.tprint(`weaken grow threads: ${weakenGrowThreads}`);
 
     var weakenTime = ns.getWeakenTime(target);
     var growTime = ns.getGrowTime(target);
@@ -28,5 +26,5 @@ export async function main(ns) {
 
     ns.tprint("starting batch_run");
     await batch_run(ns, target, scripts, counts, delays);
-    ns.toast("launched");
+    ns.toast("launched smart_grow");
 }
