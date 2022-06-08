@@ -39,8 +39,8 @@ export async function main(ns) {
 			}
 		}
 
-		ns.print("checking node count");
-		while (nodeCount < nodeLimit) {
+		ns.print("buying new nodes");
+		while (true) {
 			var purchaseCost = ns.hacknet.getPurchaseNodeCost();
 			var cash = ns.getServerMoneyAvailable("home");
 
@@ -75,6 +75,6 @@ export async function main(ns) {
 			nodeCount = ns.hacknet.numNodes();
 		}
 
-		await ns.sleep(1000*60*15);
+		await ns.sleep(1000*60*60);
 	}
 }

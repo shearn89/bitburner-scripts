@@ -1,8 +1,9 @@
 /** @param {NS} ns */
 export async function main(ns) {
-	var dataFile = "spider_state.txt"
-	var bestTarget = "iron-gym"
-	var bestTargetLevel = 100
+	var dataFile = "/data/spider_state.txt"
+	var targetFile = "/data/best_target.txt"
+	var bestTarget = "the-hub"
+	var bestTargetLevel = 300
 
 	while (true) {
 		ns.print("waking");
@@ -75,7 +76,7 @@ export async function main(ns) {
 	
 			ns.print("saving data");
 			await ns.write(dataFile, hacked.join("\n"), "w");
-			await ns.write("bestTarget.txt", bestTarget, "w");
+			await ns.write(targetFile, bestTarget, "w");
 			ns.print("sleeping...")
 		}
 		await ns.sleep(1000*10*60);

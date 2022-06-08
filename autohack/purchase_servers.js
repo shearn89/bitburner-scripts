@@ -9,8 +9,8 @@ export async function main(ns) {
 
 		var factor = ns.read(dataFile);
 		if ("" == factor) {
-			// 2^13 = 8192 GB, 450M
-			factor = 13;
+			// 2^14 = 16384 GB, 901M
+			factor = 14;
 		}
 
 		while (servers.length < limit) {
