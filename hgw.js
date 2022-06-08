@@ -1,49 +1,91 @@
 /** @param {NS} ns */
 export async function main(ns) {
-	var dataFile = "/data/best_target.txt"
+    ns.tprint(">>> starting smart HGW batch");
+    var target = ns.args[0];
+    var targetAmount = ns.args[1];
+
+    var growIncrease = 0.004;
+    var hackIncrease = 0.002;
+    var weakenDecrease = 0.05;
+
+    var max = ns.getServerMaxMoney(target);
+
+    var moneyPerThread = ns.hackAnalyze(target);
+    var hackThreads = Math.floor(targetAmount/moneyPerThread);
+
+    var growChange = (100-targetAmount)/100
+    var resultAmount = max/(max*growChange)
+    var growThreads = Math.ceil(ns.growthAnalyze(target, resultAmount));
+
+    // var growSecurity = ns.growthAnalyzeSecurity(growThreads, target, 1);
+    var growSecurity = growThreads*growIncrease;
+
+    // var hackSecurity = ns.hackAnalyzeSecurity(hackThreads, target);
+    var hackSecurity = hackThreads*hackIncrease;
+
+    var weakenHackThreads = Math.ceil(hackSecurity/weakenDecrease);
+    ns.tprint(`weaken hack threads: ${weakenHackThreads}`);
+
+    var weakenGrowThreads = Math.ceil(growSecurity/weakenDecrease);
+    ns.tprint(`weaken grow threads: ${weakenGrowThreads}`);
+
+    ns.tprint("grow threads:", growThreads);
+    ns.tprint(`${targetAmount}% hack threads: ${hackThreads}`);
+
+    var totalThreads = weakenHackThreads+weakenGrowThreads+growThreads+hackThreads;
+    ns.tprint(`total threads: ${totalThreads}`);
 
     var weakenScript = "/v3/weaken.js";
     var growScript = "/v3/grow.js";
     var hackScript = "/v3/hack.js";
-    var totalMemUsage = 6.95;
 
     var workers = ns.getPurchasedServers();
 
-    var target = ns.read(dataFile);
-    if ("" == target) {
-        target = ns.args[0];
-    }
+    var target = ns.args[0];
 
-    // while true?
-    ns.tprint("launching workers");
-    for (let worker of workers) {
-        // FOR worker in workers...
-        var weakTime = ns.getWeakenTime(target);
-        var growTime = ns.getGrowTime(target);
-        var hackTime = ns.getHackTime(target);
+    ns.tprint(">>> launching workers");
+    var weakTime = ns.getWeakenTime(target);
+    var growTime = ns.getGrowTime(target);
+    var hackTime = ns.getHackTime(target);
+    var buffer = 100+50;
+    var weakDelay = buffer*2;
+    var growDelay = (weakTime+buffer)-growTime;
+    var hackDelay = (weakTime-buffer)-hackTime;
 
-        // max random sleep
-        var buffer = 100+50;
-        var weakDelay = buffer*2;
-        var growDelay = (weakTime+buffer)-growTime;
-        var hackDelay = (weakTime-buffer)-hackTime;
+    var processMap = {};
 
-        // var totalBatches = Math.floor(ns.getServerMaxRam(worker)/totalMemUsage);
-        var freeRam = ns.getServerMaxRam(worker)-ns.getServerUsedRam(worker);
-        var totalBatches = Math.floor(freeRam/totalMemUsage);
-        ns.print("run time: ", (Math.ceil(weakTime)+buffer*2)/1000, "s");
-        ns.tprint(`worker: ${worker}, batches: ${totalBatches}`);
+    var scripts = [weakenScript, weakenScript, growScript, hackScript];
+    var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
+    var delays = [0, weakDelay, growDelay, hackDelay];
+    var iterator = 0;
+    var running = 0;
 
-        for (let i = 0; i<totalBatches; i++) {
-            // ns.tprint("starting batch ", i);
-            // TODO: Need to work out thread ratios!!!
-            ns.exec(weakenScript, worker, 1, target, 0, i)
-            ns.exec(weakenScript, worker, 1, target, weakDelay, i)
-            ns.exec(growScript, worker, 1, target, growDelay, i)
-            ns.exec(hackScript, worker, 1, target, hackDelay, i)
-            await ns.sleep(200);
+    var worker = workers.pop();
+    ns.tprint("starting loop");
+    while(worker) {
+        if (iterator > scripts.length) {
+            break;
         }
-        ns.print(`completed ${worker}`)
+        var freeRam = ns.getServerMaxRam(worker)-ns.getServerUsedRam(worker);
+        ns.tprint(`server ${worker} has ${freeRam} RAM free`);
+        var serverBatches = Math.floor(freeRam/ns.getScriptRam(scripts[iterator]));
+        ns.tprint(`we can run ${serverBatches} of ${scripts[iterator]} on ${worker}`);
+        
+        var thisBatches = counts[iterator]-running-serverBatches;
+        ns.tprint(`we need to run ${thisBatches} more of ${scripts[iterator]}`);
+        if (thisBatches < 0) {
+            // can run more than required, run what's left
+            ns.tprint(`running remaining ${counts[iterator]-running} threads`);
+            ns.exec(scripts[iterator], worker, counts[iterator]-running, target, delays[iterator]);
+            iterator += 1;
+            running = 0;
+        } else {
+            // not enough, run the max we can and move to next worker
+            ns.tprint(`running max ${serverBatches} threads`);
+            ns.exec(scripts[iterator], worker, serverBatches, target, delays[iterator]);
+            running += serverBatches;
+            worker = workers.pop()
+        }
     }
-    ns.print("launched");
+    ns.tprint("launched");
 }
