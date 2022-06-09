@@ -7,8 +7,12 @@ import {
 /** @param {NS} ns */
 export async function main(ns) {
     var target = ns.args[0];
+    var batchTag = ns.args[1];
     if (!target) {
         ns.toast("must provide target");
+    }
+    if (!batchTag){
+        batchTag = 0;
     }
 
     var weakenThreads = get_weaken_threads(ns, target);
@@ -18,6 +22,6 @@ export async function main(ns) {
     var weakenTime = ns.getWeakenTime(target);
 
     ns.tprint(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
-    await batch_run(ns, target, scripts, counts, delays);
+    await batch_run(ns, target, scripts, counts, delays, batchTag);
     ns.toast("launched smart_weaken");
 }

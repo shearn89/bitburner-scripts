@@ -1,15 +1,20 @@
 /** @param {NS} ns */
 export async function main(ns) {
     var targets = [
-        "silver-helix",
-        "omega-net",
-        "crush-fitness",
-        "johnson-ortho",
-        "the-hub"
+        // "foodnstuff",
+        // "joesguns",
+        // "harakiri-sushi", // 0
+        "iron-gym", // 1
+        "silver-helix", // 2
+        "omega-net", // 2
+        "crush-fitness", // 2
+        "johnson-ortho", // 2
+        "the-hub" // 2
     ]
 
     for (let target of targets) {
         ns.tprint(`>>> ${target} <<<`)
+        ns.tprint(`ports: ${ns.getServerNumPortsRequired(target)}, level: ${ns.getServerRequiredHackingLevel(target)}`)
         
         var max = ns.getServerMaxMoney(target);
         var cash = ns.getServerMoneyAvailable(target);

@@ -4,6 +4,9 @@ export async function main(ns) {
 	var targets = ns.read(dataFile).split("\n");
 	// targets = targets.concat(ns.getPurchasedServers());
 	targets = ns.getPurchasedServers();
+	if (targets.length < 1) {
+		targets = ["home"];
+	}
 
 	var script = ns.args[0];
 	var value = ns.args[1];
