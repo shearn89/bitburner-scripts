@@ -1,14 +1,9 @@
 
 /** @param {NS} ns */
 export async function main(ns) {
-    var obj = test();
-    var a = obj['foo'];
-    var b = obj['bar'];
-    ns.tprint(`a: ${a}, b: ${b}`);
-}
-
-export function test() {
-    var foo = "foo";
-    var bar = "bar";
-    return { foo, bar };
+    var target = ns.args[0];
+    var cash = ns.getServerMaxMoney(target);
+    var level = ns.getServerRequiredHackingLevel(target);
+    var ports = ns.getServerNumPortsRequired(target);
+    ns.tprint(`server: ${target}, cash: ${cash}, level: ${level}, ports: ${ports}`)
 }

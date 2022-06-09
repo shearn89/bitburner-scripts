@@ -65,7 +65,7 @@ export async function main(ns) {
             batchSet = batchLimit;
         }
 
-        ns.print(`will run ${batchSet} batches`);
+        ns.tprint(`will run ${batchSet} batches`);
 
         for (var i=0; i<batchSet; i++) {
             weakenTime = ns.getWeakenTime(target);
