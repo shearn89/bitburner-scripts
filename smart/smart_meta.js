@@ -25,23 +25,38 @@ export async function main(ns) {
     const percentage = flags['percentage'];
     const setLimit = flags['setlimit'];
 
-    // TODO run grow/weaken to up this
-    // var cash = Math.floor(ns.getServerMoneyAvailable(target));
-    // var securityLevel = ns.getServerSecurityLevel(target);
+    // check server is prepped
+    var weakenTime = ns.getWeakenTime(target);
+    var cash = Math.floor(ns.getServerMoneyAvailable(target));
+    var securityLevel = ns.getServerSecurityLevel(target);
+    var sleeper = false;
+    if (securityLevel > ns.getServerMinSecurityLevel(target)) {
+        await ns.run("/smart/smart_weaken.js", "--target", target, "--batchtag", 0);
+        sleeper = true;
+        await ns.sleep(250);
+    }
+    if (cash < ns.getServerMaxMoney(target)) {
+        await ns.run("/smart/smart_grow.js", "--target", target, "--batchtag", 1);
+        sleeper = true;
+    }
+    if (sleeper) {
+        var prepSleepTime = weakenTime+1000*10;
+        ns.tprint(`had to prep server, sleeping til done (${Math.ceil(prepSleepTime/1000)}s)`);
+        await ns.sleep(prepSleepTime);
+    }
 
     const {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
     const {growThreads, weakenGrowThreads} = get_grow_threads(ns, target, percentage);
 
     const totalThreads = weakenHackThreads+weakenGrowThreads+growThreads+hackThreads;
-    // var runtime = Math.ceil(ns.getWeakenTime(target)/1000)
-
-    const {maxThreads, batchSet} = get_runnable_batches(ns, flags, scriptSize, totalThreads);
-    ns.print(`capacity: ${maxThreads}, would run ${batchSet} batches`);
 
     var setCount = 0;
     while(setLimit > setCount) {
+        var {maxThreads, batchSet} = get_runnable_batches(ns, flags, scriptSize, totalThreads);
+        ns.print(`capacity: ${maxThreads}, would run ${batchSet} batches`);
+
         for (var i=0; i<batchSet; i++) {
-            var weakenTime = ns.getWeakenTime(target);
+            weakenTime = ns.getWeakenTime(target);
             var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
             var delays = get_delays(ns, target);
 
@@ -56,5 +71,4 @@ export async function main(ns) {
             await ns.sleep(sleepTime);
         }
     }
-    ns.tprint(`launched ${batchSet} batches against ${target}`);
 }
