@@ -11,10 +11,10 @@ export async function main(ns) {
         var sRam = ns.getServerMaxRam(server);
         ns.tprint("server: ", server, ", ram: ", sRam);
 
-        if (sRam < 32) {
-            ns.tprint("server too small, deleting");
-            ns.killall(server);
-			ns.deleteServer(server);
-        }
+        // if (sRam < 32) {
+        //     ns.tprint("server too small, deleting");
+        //     ns.killall(server);
+		//     ns.deleteServer(server);
+        // }
     }
 }
