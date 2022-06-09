@@ -40,9 +40,11 @@ export async function main(ns) {
             ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime/1000)}s`);
             await ns.sleep(250);
         }
-        var sleepTime = ns.getWeakenTime(target)-(250*batchSet)+5000;
+        var sleepTime = ns.getWeakenTime(target)-(250*batchSet)+10000;
         ns.printf(`launched batchset, sleeping for ${Math.ceil(sleepTime/1000)}s`);
         setCount += 1;
-        await ns.sleep(sleepTime);
+        if (setCount != setLimit) {
+            await ns.sleep(sleepTime);
+        }
     }
 }
