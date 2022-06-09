@@ -10,6 +10,8 @@ import {
 import {
     scripts,
     get_flags,
+    buffer,
+    batchInterval,
 } from "/lib/constants";
 
 /** @param {NS} ns */
@@ -53,7 +55,16 @@ export async function main(ns) {
     var setCount = 0;
     while(setLimit > setCount) {
         var {maxThreads, batchSet} = get_runnable_batches(ns, flags, scriptSize, totalThreads);
-        ns.print(`capacity: ${maxThreads}, would run ${batchSet} batches`);
+        ns.print(`capacity: ${maxThreads}, could run ${batchSet} batches`);
+
+        var timeLimit = ns.getWeakenTime(target)+buffer;
+        var batchLimit = Math.floor(timeLimit/batchInterval);
+        if (batchSet > batchLimit) {
+            ns.print("trying to run more than would complete in 1 loop");
+            batchSet = batchLimit;
+        }
+
+        ns.print(`will run ${batchSet} batches`);
 
         for (var i=0; i<batchSet; i++) {
             weakenTime = ns.getWeakenTime(target);
@@ -62,7 +73,7 @@ export async function main(ns) {
 
             await batch_run(ns, target, scripts, counts, delays, i);
             ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime/1000)}s`);
-            await ns.sleep(250);
+            await ns.sleep(batchInterval);
         }
         var sleepTime = ns.getWeakenTime(target)-(250*batchSet)+10000;
         ns.printf(`launched batchset ${setCount}, sleeping for ${Math.ceil(sleepTime/1000)}s`);

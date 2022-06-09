@@ -32,6 +32,9 @@ export async function main(ns) {
 
 			// we have the smallest server
 			var smallestFactor = Math.log2(smallestRam)+1;
+			if (factor > 20) {
+				factor = 20;
+			}
 			ns.tprint(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), replacing at factor ${smallestFactor}`);
 			if (ns.ps(smallest).length > 0) {
 				ns.tprint("server is running scripts, skipping");

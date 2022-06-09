@@ -9,7 +9,7 @@ export async function main(ns) {
         "omega-net", // 2
         "crush-fitness", // 2
         "johnson-ortho", // 2
-        "the-hub" // 2
+        "the-hub", // 2
     ]
 
     for (let target of targets) {

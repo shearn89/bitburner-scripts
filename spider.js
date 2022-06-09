@@ -28,6 +28,7 @@ export async function main(ns) {
 				continue;
 			}
 			seen.push(target);
+			ns.tprint(`${target} max cash ${ns.getServerMaxMoney(target)}`);
 			var newHosts = ns.scan(target);
 			stack = stack.concat(newHosts);
 			ns.tprint(`scanned ${target}, new length ${stack.length}`);
