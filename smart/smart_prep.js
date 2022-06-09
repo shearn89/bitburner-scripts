@@ -11,7 +11,7 @@ export async function main(ns) {
     }
     const target = flags['target'];
 
-    await ns.run("/smart/smart_weaken.js", "--target", target, "--batchtag", 0);
+    await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0);
     await ns.sleep(250);
-    await ns.run("/smart/smart_grow.js", "--target", target, "--batchtag", 1);
+    await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1);
 }

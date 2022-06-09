@@ -33,18 +33,19 @@ export async function main(ns) {
     var securityLevel = ns.getServerSecurityLevel(target);
     var sleeper = false;
     if (securityLevel > ns.getServerMinSecurityLevel(target)) {
-        await ns.run("/smart/smart_weaken.js", "--target", target, "--batchtag", 0);
+        await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0);
         sleeper = true;
         await ns.sleep(250);
     }
     if (cash < ns.getServerMaxMoney(target)) {
-        await ns.run("/smart/smart_grow.js", "--target", target, "--batchtag", 1);
+        await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1);
         sleeper = true;
     }
     if (sleeper) {
         var prepSleepTime = weakenTime+1000*10;
-        ns.tprint(`had to prep server, sleeping til done (${Math.ceil(prepSleepTime/1000)}s)`);
+        ns.print(`had to prep server, sleeping til done (${Math.ceil(prepSleepTime/1000)}s)`);
         await ns.sleep(prepSleepTime);
+        ns.print("done");
     }
 
     const {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
