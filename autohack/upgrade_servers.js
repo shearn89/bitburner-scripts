@@ -17,7 +17,12 @@ export async function main(ns) {
 
 			// find smallest server
 			for (let server of servers) {
+				if (ns.ps(server).length > 0) {
+					ns.tprint("server is running scripts, skipping");
+					continue;
+				}
 				var ram = ns.getServerMaxRam(server);
+
 				// ns.tprint(`server: ${server}, ram: ${ram}, smallest: ${smallest}, smallestRam: ${smallestRam}`);
 				if (ram < smallestRam) {
 					smallest = server;
@@ -26,16 +31,18 @@ export async function main(ns) {
 			}
 
 			// we have the smallest server
-			var newFactor = Math.log2(smallestRam)+1;
-			ns.print(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), replacing at factor ${newFactor}`);
+			var smallestFactor = Math.log2(smallestRam)+1;
+			ns.tprint(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), replacing at factor ${smallestFactor}`);
 			if (ns.ps(smallest).length > 0) {
-				ns.print("server is running scripts, skipping");
+				ns.tprint("server is running scripts, skipping");
 			} else {
-				ns.print("deleting server");
+				ns.tprint("deleting server");
 				ns.deleteServer(smallest);
 			}
-			factor = newFactor;
-			await ns.write(dataFile, factor, "w");
+			if (smallestFactor > factor) {
+				factor = smallestFactor;
+				await ns.write(dataFile, factor, "w");
+			}
 		}
 		await ns.sleep(100);
 		while (servers.length < limit) {
