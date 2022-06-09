@@ -4,27 +4,21 @@ import { get_hack_threads } from "/lib/analysis";
 import { get_delays } from "/lib/analysis";
 
 import {
-    scripts
+    scripts,
+    get_flags
 } from "/lib/constants";
 
 /** @param {NS} ns */
 export async function main(ns) {
-    var target = ns.args[0];
-    var percentage = ns.args[1];
-    var batchSet = ns.args[2];
-    var setLimit = ns.args[3];
-    if (!target) {
-        ns.alert("must provide target");
+    const flags = get_flags(ns);
+    if (!flags) {
+        ns.tprint("failed to get flags");
+        return;
     }
-    if (!percentage) {
-        ns.alert("must provide percentage");
-    }
-    if (!batchSet) {
-        ns.alert("must provide batch size");
-    }
-    if (!setLimit) {
-        setLimit = Infinity;
-    }
+    const target = flags['target'];
+    const percentage = flags['percentage'];
+    const batchSet = flags['batchset'];
+    const setLimit = flags['setlimit'];
 
     var setCount = 0;
     while(setLimit > setCount) {

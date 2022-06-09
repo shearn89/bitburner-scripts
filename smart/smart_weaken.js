@@ -1,19 +1,20 @@
 import { batch_run } from "/lib/batch_run";
 import { get_weaken_threads } from "/lib/analysis";
 import {
-    weakenScript
+    weakenScript,
+    get_flags
 } from "/lib/constants";
 
 /** @param {NS} ns */
 export async function main(ns) {
-    var target = ns.args[0];
-    var batchTag = ns.args[1];
-    if (!target) {
-        ns.toast("must provide target");
+    const flags = get_flags(ns);
+    if (!flags) {
+        ns.tprint("failed to get flags");
+        return;
     }
-    if (!batchTag){
-        batchTag = 0;
-    }
+    const target = flags['target'];
+    const batchTag = flags['batchtag'];
+    ns.tprint(target);
 
     var weakenThreads = get_weaken_threads(ns, target);
     var scripts = [weakenScript];

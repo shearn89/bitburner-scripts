@@ -9,7 +9,10 @@ export async function main(ns) {
 
 		var factor = ns.read(dataFile);
 		if ("" == factor) {
+			// 2^12 = 4096 GB, 225M
+			// 2^13 = 8192 GB, 450M
 			// 2^14 = 16384 GB, 901M
+			// this should stay equal to home server (or close to)
 			factor = 14;
 		}
 

@@ -4,19 +4,19 @@ import { get_grow_threads } from "/lib/analysis";
 import {
     weakenScript,
     growScript,
-    buffer
+    buffer,
+    get_flags
 } from "/lib/constants";
 
 /** @param {NS} ns */
 export async function main(ns) {
-    var target = ns.args[0];
-    var batchTag = ns.args[1];
-    if (!target) {
-        ns.toast("must provide target");
+    const flags = get_flags(ns);
+    if (!flags) {
+        ns.tprint("failed to get flags");
+        return;
     }
-    if (!batchTag){
-        batchTag = 0;
-    }
+    const target = flags['target'];
+    const batchTag = flags['batchtag'];
 
     var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target);
 
