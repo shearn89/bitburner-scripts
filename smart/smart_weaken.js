@@ -14,7 +14,6 @@ export async function main(ns) {
     }
     const target = flags['target'];
     const batchTag = flags['batchtag'];
-    ns.tprint(target);
 
     var weakenThreads = get_weaken_threads(ns, target);
     var scripts = [weakenScript];
