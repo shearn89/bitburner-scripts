@@ -5,7 +5,9 @@ import { get_delays } from "/lib/analysis";
 
 import {
     scripts,
-    get_flags
+    get_flags,
+    buffer,
+    batchInterval,
 } from "/lib/constants";
 
 /** @param {NS} ns */
@@ -17,25 +19,35 @@ export async function main(ns) {
     }
     const target = flags['target'];
     const percentage = flags['percentage'];
-    const batchSet = flags['batchset'];
+    var batchSet = flags['batchset'];
     const setLimit = flags['setlimit'];
 
     var setCount = 0;
-    while(setLimit > setCount) {
-        for (var i=0; i<batchSet; i++) {
-            var {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
-            var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target, percentage);
+    ns.tprint(`time: ${Math.ceil(ns.getWeakenTime(target) / 1000)}`);
+    while (setLimit > setCount) {
+        var timeLimit = ns.getWeakenTime(target) + buffer;
+        var batchLimit = Math.floor(timeLimit / batchInterval);
+        ns.tprint(`could run ${batchLimit} batches, requested ${batchSet}, checking constraint`);
+        if (batchSet > batchLimit) {
+            ns.print("trying to run more than would complete in 1 loop");
+            batchSet = batchLimit;
+        }
+        ns.tprint(`will run ${batchSet} batches`);
+
+        for (var i = 0; i < batchSet; i++) {
+            var { hackThreads, weakenHackThreads } = get_hack_threads(ns, target, percentage);
+            var { growThreads, weakenGrowThreads } = get_grow_threads(ns, target, percentage);
 
             var weakenTime = ns.getWeakenTime(target);
             var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
             var delays = get_delays(ns, target);
 
             await batch_run(ns, target, scripts, counts, delays, i);
-            ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime/1000)}s`);
-            await ns.sleep(250);
+            ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime / 1000)}s`);
+            await ns.sleep(batchInterval);
         }
-        var sleepTime = ns.getWeakenTime(target)-(250*batchSet)+10000;
-        ns.printf(`launched batchset ${setCount}, sleeping for ${Math.ceil(sleepTime/1000)}s`);
+        var sleepTime = ns.getWeakenTime(target) - (batchInterval * batchSet) + 10000;
+        ns.printf(`launched batchset ${setCount}, sleeping for ${Math.ceil(sleepTime / 1000)}s`);
         setCount += 1;
         if (setCount != setLimit) {
             await ns.sleep(sleepTime);

@@ -8,6 +8,7 @@ export async function main(ns) {
 		ns.print("checking existing nodes");
 		for (let i=0; i<nodeCount; i++) {
 			var node = ns.hacknet.getNodeStats(i);
+			var nodeNumber = i;
 			if (node['level'] < 200) {
 				var levelUpgrade = 200-node['level']
 				ok = ns.hacknet.upgradeLevel(nodeNumber, levelUpgrade);
@@ -30,6 +31,7 @@ export async function main(ns) {
 			
 			if (node['cores'] < 16) {
 				var coreUpgrade = 16-node['cores']
+				ns.print(`coreUpgrade: ${coreUpgrade}, numCores: ${node['cores']}`)
 				ok = ns.hacknet.upgradeCore(nodeNumber, coreUpgrade);
 				if (!ok) {
 					ns.print("couldn't upgrade core to max");
@@ -75,6 +77,7 @@ export async function main(ns) {
 			nodeCount = ns.hacknet.numNodes();
 		}
 		if (ns.args[0]) {
+			ns.tprint("exiting...");
 			break;
 		}
 		await ns.sleep(1000*60*60);

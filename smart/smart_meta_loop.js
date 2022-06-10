@@ -36,7 +36,7 @@ export async function main(ns) {
         if (securityLevel > ns.getServerMinSecurityLevel(target)) {
             await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0);
             sleeper = true;
-            await ns.sleep(250);
+            await ns.sleep(batchInterval);
         }
         if (cash < ns.getServerMaxMoney(target)) {
             await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1);
@@ -77,14 +77,14 @@ export async function main(ns) {
                 ns.print(`launched batch ${i}, will take ${Math.ceil(weakenTime / 1000)}s`);
                 await ns.sleep(batchInterval);
             }
-            var sleepTime = ns.getWeakenTime(target) - (250 * batchSet) + 10000;
+            var sleepTime = ns.getWeakenTime(target) - (batchInterval * batchSet) + 10000;
             ns.printf(`launched batchset ${setCount}, sleeping for ${Math.ceil(sleepTime / 1000)}s`);
             setCount += 1;
             if (setCount != setLimit) {
                 await ns.sleep(sleepTime);
             }
         }
-        var sleepTime = ns.getWeakenTime(target) - (250 * batchSet) + 10000;
+        var sleepTime = ns.getWeakenTime(target) - (batchInterval * batchSet) + 10000;
         await ns.sleep(sleepTime);
     }
 }

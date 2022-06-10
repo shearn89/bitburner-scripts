@@ -17,6 +17,11 @@ export async function main(ns) {
         "summit-uni", // 3
         "rho-construction", // 3
         "millenium-fitness", // 3
+        "aevum-police", // 4
+        "alpha-ent", // 4
+        "applied-energetics", // 4
+        "global-pharm", // 4
+        "zb-def", // 4
     ]
 
     var longest = 0;

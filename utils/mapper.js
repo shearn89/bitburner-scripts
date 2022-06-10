@@ -7,7 +7,7 @@ export async function main(ns) {
 
     var seen = ["home", "darkweb"].concat(ns.getPurchasedServers());
 
-    var maxPorts = 3;
+    var maxPorts = 5;
     var maxCash = 0;
     var highest = "";
     // dedupe
@@ -42,7 +42,7 @@ export async function main(ns) {
 	// await ns.write(dataFile, hacked.join("\n"), "w");
 
     for (let server of servers) {
-        if (server.ports == 3) {
+        if (server.ports == maxPorts) {
             ns.tprint(server);
         }
     }
