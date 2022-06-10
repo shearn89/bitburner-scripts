@@ -74,7 +74,9 @@ export async function main(ns) {
 			ns.print("bought and upgraded, trying again");
 			nodeCount = ns.hacknet.numNodes();
 		}
-
+		if (ns.args[0]) {
+			break;
+		}
 		await ns.sleep(1000*60*60);
 	}
 }

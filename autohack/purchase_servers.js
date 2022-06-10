@@ -23,6 +23,9 @@ export async function main(ns) {
 			servers = ns.getPurchasedServers();
 			await ns.sleep(100);
 		}
+		if (ns.args[0]) {
+			break;
+		}
 		await ns.sleep(1000*60*10);
 	}
 }
