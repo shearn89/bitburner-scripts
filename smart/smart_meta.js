@@ -60,6 +60,7 @@ export async function main(ns) {
 
         var timeLimit = ns.getWeakenTime(target)+buffer;
         var batchLimit = Math.floor(timeLimit/batchInterval);
+        ns.tprint(`could run ${batchSet} batches, checking constraint`);
         if (batchSet > batchLimit) {
             ns.print("trying to run more than would complete in 1 loop");
             batchSet = batchLimit;
