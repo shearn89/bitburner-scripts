@@ -1,6 +1,7 @@
 import {
     get_flags,
     batchInterval,
+    weakenScript,
 } from "/lib/constants";
 
 import { set_run } from "/lib/set_run";
@@ -31,8 +32,8 @@ export async function main(ns) {
         sleeper = true;
     }
     if (sleeper) {
-        var prepSleepTime = weakenTime+1000*10;
-        ns.print(`had to prep server, sleeping til done (${Math.ceil(prepSleepTime/1000)}s)`);
+        var prepSleepTime = weakenTime + 1000 * 10;
+        ns.print(`had to prep server, sleeping til done (${Math.ceil(prepSleepTime / 1000)}s)`);
         await ns.sleep(prepSleepTime);
         ns.print("done");
     }
