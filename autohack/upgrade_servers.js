@@ -39,7 +39,7 @@ export async function main(ns) {
 				ns.tprint("no more to upgrade");
 				return;
 			}
-			ns.tprint(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), replacing at factor ${smallestFactor}`);
+			ns.tprint(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), factor is ${factor}, smallestFactor is ${smallestFactor}`);
 			if (ns.ps(smallest).length > 0) {
 				ns.tprint("server is running scripts, skipping");
 			} else {

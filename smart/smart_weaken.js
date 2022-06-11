@@ -21,7 +21,7 @@ export async function main(ns) {
     var delays = [0];
     var weakenTime = ns.getWeakenTime(target);
 
-    ns.tprint(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
+    ns.print(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
     await batch_run(ns, target, scripts, counts, delays, batchTag);
     ns.toast("launched smart_weaken");
 }
