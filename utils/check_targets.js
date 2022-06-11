@@ -37,6 +37,6 @@ export async function main(ns) {
         var securityLevel = Math.ceil(ns.getServerSecurityLevel(target));
         var minSecurityLevel = ns.getServerMinSecurityLevel(target);
         var spacer = longest+1-target.length;
-        ns.tprint(`${target}${" ".repeat(spacer)}--- ports: ${ns.getServerNumPortsRequired(target)}, level: ${ns.getServerRequiredHackingLevel(target)}, cash: ${Math.floor((cash/max)*100)}%, sec level: ${securityLevel}/${minSecurityLevel}/+${Math.ceil(securityLevel-minSecurityLevel)}`)
+        ns.tprintf(`${target}${" ".repeat(spacer)}--- ports: ${ns.getServerNumPortsRequired(target)}, level: ${ns.getServerRequiredHackingLevel(target)}, cash: ${Math.floor((cash/max)*100)}%, sec level: ${securityLevel}/${minSecurityLevel}/+${Math.ceil(securityLevel-minSecurityLevel)}`)
     }
 }
