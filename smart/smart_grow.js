@@ -28,7 +28,8 @@ export async function main(ns) {
     var counts = [weakenGrowThreads, growThreads];
     var delays = [0, delay];
 
-    ns.print(`starting batch_run, need ${Math.ceil(weakenTime/1000)} seconds.`);
+    var time = Math.ceil(weakenTime/1000);
+    ns.print(`starting batch_run, need ${time} seconds.`);
     await batch_run(ns, target, scripts, counts, delays, batchTag);
-    ns.toast("launched smart_grow");
+    ns.toast(`launched smart_grow on ${target} (${time}s)`);
 }

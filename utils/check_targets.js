@@ -1,25 +1,7 @@
+import { targets } from "/lib/constants";
+
 /** @param {NS} ns */
 export async function main(ns) {
-    var targets = [
-        "foodnstuff", // 0
-        "harakiri-sushi", // 0
-        "iron-gym", // 1
-        "silver-helix", // 2
-        "crush-fitness", // 2
-        "omega-net", // 2
-        "johnson-ortho", // 2
-        "the-hub", // 2
-        "catalyst", // 3
-        "rho-construction", // 3
-        "unitalife", // 4
-        "applied-energetics", // 4
-        "global-pharm", // 4
-        "4sigma", // 5
-        "nwo", // 5
-        "ecorp", // 5
-        "megacorp", // 5
-    ]
-
     var longest = 0;
     for (let target of targets){ 
         if (target.length > longest) {
