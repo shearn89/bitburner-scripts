@@ -27,7 +27,8 @@ export async function main(ns) {
         }
         var level = ns.getServerRequiredHackingLevel(target);
         var ports = ns.getServerNumPortsRequired(target);
-        servers.push({"server": target, "cash": cash, "level": level, "ports": ports})
+        var growth = ns.getServerGrowth(target);
+        servers.push({"server": target, "cash": cash, "level": level, "ports": ports, "growth": growth})
 
         var newHosts = ns.scan(target);
         stack = stack.concat(newHosts);
@@ -47,10 +48,11 @@ function print_server(ns, server, longServer, longCash){
     var cash = server['cash'];
     var level = server['level'];
     var ports = server['ports'];
+    var growth = server['growth'];
 
     var namePadding = longServer.length - target.length + 1;
     var cashPadding = String(longCash).length - String(cash).length+1;
-    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} | ${String(level).padStart(4, ' ')} | ${ports}`)
+    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} | ${String(level).padStart(4, ' ')} | ${ports} | ${growth}`)
 }
 
 export function count_exploits(ns) {
