@@ -28,6 +28,7 @@ export async function main(ns) {
             ns.print(`passed checks: ${runningPids.length} scripts running. running hack on ${target}`);
             running += 1;
             var pid = ns.run("/smart/smart_meta_loop.js", 1, "--target", target);
+            // var pid = ns.run("/smart/smart_meta.js", 1, "--target", target);
             runningPids.push({"target": target, "pid": pid})
             ns.print(runningPids);
         } else if ((myHackLevel > (serverHackLevel/2)) && hasRoot && (runningPids.length >= maxRunning)) {
