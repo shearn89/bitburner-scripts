@@ -1,13 +1,14 @@
 import {
+    flagSet,
     get_flags,
     batchInterval,
-    weakenScript,
 } from "/lib/constants";
 
 import { set_run } from "/lib/set_run";
 
 /** @param {NS} ns */
 export async function main(ns) {
+    ns.disableLog("ALL");
     const flags = get_flags(ns);
     if (!flags) {
         ns.tprint("failed to get flags");
@@ -23,12 +24,12 @@ export async function main(ns) {
     var securityLevel = ns.getServerSecurityLevel(target);
     var sleeper = false;
     if (securityLevel > ns.getServerMinSecurityLevel(target)) {
-        await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0);
+        await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, flags['breached'] ? "--breached" : null);
         sleeper = true;
         await ns.sleep(batchInterval);
     }
     if (cash < ns.getServerMaxMoney(target)) {
-        await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1);
+        await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1, flags['breached'] ? "--breached" : null);
         sleeper = true;
     }
     if (sleeper) {
@@ -39,4 +40,17 @@ export async function main(ns) {
     }
 
     await set_run(ns, target, percentage, 0, setLimit);
+}
+
+export function autocomplete(data, args) {
+    data.flags(flagSet)
+    const options = {
+        'target': [...data.servers]
+    }
+    for(let arg of ns.args.slice(-2)){
+        if(arg.startsWith('--')){
+            return options[arg.slice(2)]||[]
+        }
+    }
+    return []
 }

@@ -8,6 +8,7 @@ import { set_run } from "/lib/set_run";
 
 /** @param {NS} ns */
 export async function main(ns) {
+    ns.disableLog("ALL");
     const scriptSize = 1.75;
 
     const flags = get_flags(ns);
@@ -26,12 +27,12 @@ export async function main(ns) {
         var securityLevel = ns.getServerSecurityLevel(target);
         var sleeper = false;
         if (securityLevel > ns.getServerMinSecurityLevel(target)) {
-            await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0);
+            await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, flags['breached'] ? "--breached" : null);
             sleeper = true;
             await ns.sleep(batchInterval);
         }
         if (cash < ns.getServerMaxMoney(target)) {
-            await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1);
+            await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1, flags['breached'] ? "--breached" : null);
             sleeper = true;
         }
         if (sleeper) {

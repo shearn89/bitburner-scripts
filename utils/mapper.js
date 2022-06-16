@@ -17,27 +17,47 @@ export async function main(ns) {
         }
         seen.push(target);
 
-        if (target.length > longServer.length) {
-            longServer = target;
-        }
-
         var cash = ns.getServerMaxMoney(target);
-        if (cash > longCash) {
-            longCash = cash;
-        }
         var level = ns.getServerRequiredHackingLevel(target);
         var ports = ns.getServerNumPortsRequired(target);
         var growth = ns.getServerGrowth(target);
-        servers.push({"server": target, "cash": cash, "level": level, "ports": ports, "growth": growth})
+        var hasRoot = ns.hasRootAccess(target);
+        var securityLevel = Math.ceil(ns.getServerSecurityLevel(target));
+        var minSecurityLevel = ns.getServerMinSecurityLevel(target);
+        var currentCash = ns.getServerMoneyAvailable(target);
+        servers.push({
+            "server": target,
+            "currentCash": currentCash,
+            "cash": cash,
+            "level": level,
+            "secLevel": securityLevel,
+            "minSecLevel": minSecurityLevel,
+            "ports": ports,
+            "growth": growth,
+            "root": hasRoot
+        });
 
         var newHosts = ns.scan(target);
         stack = stack.concat(newHosts);
     }
-    ns.tprintf(`longServer: ${longServer}, longCash: ${longCash}`)
 
-    // objs.sort((a,b) => a.last_nom - b.last_nom);
+    print_servers(ns, servers) 
+}
+
+function getLongestString( a, b ) {
+    return (a.length - b.length);
+}
+
+function print_servers(ns, servers){
+    servers.sort((a,b) => getLongestString(a.server, b.server));
+    var longServer = servers.slice(-1)[0].server;
+    servers.sort((a,b) => a.cash - b.cash)[-1];
+    var longCash = servers.slice(-1)[0].cash;
+
     servers.sort((a,b) => a.level - b.level);
-    
+
+    ns.tprintf('      SERVER       |           CASH        | +S | LVL  | P |   G  | ROOT ');
+    ns.tprintf('-------------------|-----------------------|----|------|---|------|------');
     for (let server of servers) {
         print_server(ns, server, longServer, longCash);
     }
@@ -45,14 +65,18 @@ export async function main(ns) {
 
 function print_server(ns, server, longServer, longCash){
     var target = server['server'];
+    var currentCash = server['currentCash'];
     var cash = server['cash'];
     var level = server['level'];
+    var secLevel = server['secLevel'];
+    var minSecLevel = server['minSecLevel'];
     var ports = server['ports'];
     var growth = server['growth'];
+    var root = server['root'];
 
     var namePadding = longServer.length - target.length + 1;
     var cashPadding = String(longCash).length - String(cash).length+1;
-    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} | ${String(level).padStart(4, ' ')} | ${ports} | ${growth}`)
+    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')}`)
 }
 
 export function count_exploits(ns) {
