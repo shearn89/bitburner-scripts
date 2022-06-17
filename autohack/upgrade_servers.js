@@ -31,7 +31,7 @@ export async function main(ns) {
 			}
 
 			// we have the smallest server
-			var smallestFactor = Math.log2(smallestRam)+1;
+			var smallestFactor = Math.log2(smallestRam)+4;
 			if (factor > 20) {
 				factor = 20;
 			}

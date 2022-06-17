@@ -25,6 +25,8 @@ export async function main(ns) {
         var securityLevel = Math.ceil(ns.getServerSecurityLevel(target));
         var minSecurityLevel = ns.getServerMinSecurityLevel(target);
         var currentCash = ns.getServerMoneyAvailable(target);
+        var usedRam = ns.getServerUsedRam(target);
+        var maxRam = ns.getServerMaxRam(target);
         servers.push({
             "server": target,
             "currentCash": currentCash,
@@ -34,7 +36,9 @@ export async function main(ns) {
             "minSecLevel": minSecurityLevel,
             "ports": ports,
             "growth": growth,
-            "root": hasRoot
+            "root": hasRoot,
+            "usedRam": usedRam,
+            "maxRam": maxRam,
         });
 
         var newHosts = ns.scan(target);
@@ -56,8 +60,8 @@ function print_servers(ns, servers){
 
     servers.sort((a,b) => a.level - b.level);
 
-    ns.tprintf('      SERVER       |           CASH        | +S | LVL  | P |   G  | ROOT ');
-    ns.tprintf('-------------------|-----------------------|----|------|---|------|------');
+    ns.tprintf('      SERVER       |           CASH        | +S | LVL  | P |   G  | ROOT | RAM');
+    ns.tprintf('-------------------|-----------------------|----|------|---|------|------|-----');
     for (let server of servers) {
         print_server(ns, server, longServer, longCash);
     }
@@ -73,10 +77,11 @@ function print_server(ns, server, longServer, longCash){
     var ports = server['ports'];
     var growth = server['growth'];
     var root = server['root'];
+    var ram = server['maxRam'];
 
     var namePadding = longServer.length - target.length + 1;
     var cashPadding = String(longCash).length - String(cash).length+1;
-    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')}`)
+    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')} | ${ram}`)
 }
 
 export function count_exploits(ns) {
