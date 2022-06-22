@@ -12,7 +12,7 @@ export async function main(ns) {
     }
     const target = flags['target'];
 
-    await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, flags['breached'] ? "--breached" : null);
+    await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, flags['breached'] ? "--breached" : "");
     await ns.sleep(250);
-    await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1, flags['breached'] ? "--breached" : null);
+    await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1, flags['breached'] ? "--breached" : "");
 }

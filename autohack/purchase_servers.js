@@ -26,6 +26,6 @@ export async function main(ns) {
 		if (ns.args[0]) {
 			break;
 		}
-		await ns.sleep(1000*60*10);
+		await ns.sleep(1000*60*3);
 	}
 }

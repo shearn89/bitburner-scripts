@@ -45,14 +45,16 @@ export async function main(ns) {
         stack = stack.concat(newHosts);
     }
 
-    print_servers(ns, servers) 
+    var running_targets = get_running_targets(ns)
+    ns.tprint(running_targets)
+    print_servers(ns, servers, running_targets) 
 }
 
 function getLongestString( a, b ) {
     return (a.length - b.length);
 }
 
-function print_servers(ns, servers){
+function print_servers(ns, servers, running_targets){
     servers.sort((a,b) => getLongestString(a.server, b.server));
     var longServer = servers.slice(-1)[0].server;
     servers.sort((a,b) => a.cash - b.cash)[-1];
@@ -60,14 +62,33 @@ function print_servers(ns, servers){
 
     servers.sort((a,b) => a.level - b.level);
 
-    ns.tprintf('      SERVER       |           CASH        | +S | LVL  | P |   G  | ROOT | RAM');
-    ns.tprintf('-------------------|-----------------------|----|------|---|------|------|-----');
+    var myLevel = ns.getHackingLevel();
+
+    ns.tprintf('OKAY |      SERVER        |           CASH        | +S | LVL  | P |   G  | ROOT  | RAM');
+    ns.tprintf('-----|--------------------|-----------------------|----|------|---|------|-------|-----');
     for (let server of servers) {
-        print_server(ns, server, longServer, longCash);
+        var serverName = server['server']
+        var isTarget = running_targets.includes(serverName);
+        print_server(ns, server, longServer, longCash, myLevel, isTarget);
     }
 }
 
-function print_server(ns, server, longServer, longCash){
+function get_running_targets(ns) {
+    var scripts = ns.ps(ns.getHostname());
+    var targets = [];
+    for (let script of scripts) {
+        for (var i=0; i<script['args'].length; i++){
+            let arg = script['args'][i]
+            if (arg == "--target") {
+                targets.push(script['args'][i+1]);
+                break;
+            }
+        }
+    }
+    return targets;
+}
+
+function print_server(ns, server, longServer, longCash, myLevel, isTarget){
     var target = server['server'];
     var currentCash = server['currentCash'];
     var cash = server['cash'];
@@ -81,7 +102,13 @@ function print_server(ns, server, longServer, longCash){
 
     var namePadding = longServer.length - target.length + 1;
     var cashPadding = String(longCash).length - String(cash).length+1;
-    ns.tprintf(`${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')} | ${ram}`)
+    var prefix = "    ";
+    if (isTarget) {
+        prefix = "INFO";
+    } else if (level > myLevel/2) {
+        prefix = "WARN"
+    }
+    ns.tprintf(`${prefix} | ${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')} | ${ram}`)
 }
 
 export function count_exploits(ns) {

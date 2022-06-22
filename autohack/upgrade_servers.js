@@ -23,7 +23,7 @@ export async function main(ns) {
 				}
 				var ram = ns.getServerMaxRam(server);
 
-				// ns.tprint(`server: ${server}, ram: ${ram}, smallest: ${smallest}, smallestRam: ${smallestRam}`);
+				ns.tprint(`server: ${server}, ram: ${ram}, smallest: ${smallest}, smallestRam: ${smallestRam}`);
 				if (ram < smallestRam) {
 					smallest = server;
 					smallestRam = ram;
@@ -32,6 +32,9 @@ export async function main(ns) {
 
 			// we have the smallest server
 			var smallestFactor = Math.log2(smallestRam)+4;
+			if (smallestFactor > 21) {
+				smallestFactor = Math.log2(smallestRam)+1;
+			}
 			if (factor > 20) {
 				factor = 20;
 			}

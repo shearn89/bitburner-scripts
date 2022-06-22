@@ -19,15 +19,22 @@ export async function main(ns) {
     const percentage = flags['percentage'];
     const batchTag = flags['batchtag'];
 
-    var {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
-    var {growThreads, weakenGrowThreads} = get_grow_threads(ns, target, percentage);
+    var { hackThreads, weakenHackThreads } = get_hack_threads(ns, target, percentage);
+    var { growThreads, weakenGrowThreads } = get_grow_threads(ns, target, percentage);
 
     var weakenTime = ns.getWeakenTime(target);
     var counts = [weakenHackThreads, weakenGrowThreads, growThreads, hackThreads];
     var delays = get_delays(ns, target);
 
-    var time = Math.ceil(weakenTime/1000);
+    var time = Math.ceil(weakenTime / 1000);
     ns.print(`starting batch_run, need ${time} seconds.`);
     await batch_run(ns, target, scripts, counts, delays, batchTag);
     ns.toast(`launched smart_hgw on ${target} (${time}s)`);
+    await ns.sleep(weakenTime+5*1000);
+
+    var max = ns.getServerMaxMoney(target);
+    var cash = ns.getServerMoneyAvailable(target);
+    var securityLevel = Math.ceil(ns.getServerSecurityLevel(target));
+    var minSecurityLevel = ns.getServerMinSecurityLevel(target);
+    ns.tprintf(`${target} --- cash: ${Math.floor((cash / max) * 100)}%%, sec level: ${securityLevel}/${minSecurityLevel}`);
 }

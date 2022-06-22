@@ -9,7 +9,7 @@ export async function main(ns) {
 	while (true) {
 		ns.print("checking existing nodes");
 		for (let i=0; i<nodeCount; i++) {
-			// var node = ns.hacknet.getNodeStats(i);
+			var node = ns.hacknet.getNodeStats(i);
 			ns.print(node);
 			var nodeNumber = i;
 			if (node['level'] < 200) {

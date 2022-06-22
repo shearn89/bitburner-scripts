@@ -24,12 +24,20 @@ export async function main(ns) {
     var securityLevel = ns.getServerSecurityLevel(target);
     var sleeper = false;
     if (securityLevel > ns.getServerMinSecurityLevel(target)) {
-        await ns.run("/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, flags['breached'] ? "--breached" : null);
+        await ns.run(
+            "/smart/smart_weaken.js", 1, "--target", target, "--batchtag", 0, 
+            flags['breached'] ? "--breached" : "", 
+            flags['home'] ? "--home" : "",
+        );
         sleeper = true;
         await ns.sleep(batchInterval);
     }
     if (cash < ns.getServerMaxMoney(target)) {
-        await ns.run("/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1, flags['breached'] ? "--breached" : null);
+        await ns.run(
+            "/smart/smart_grow.js", 1, "--target", target, "--batchtag", 1,
+            flags['breached'] ? "--breached" : "",
+            flags['home'] ? "--home" : "",
+        );
         sleeper = true;
     }
     if (sleeper) {
@@ -39,7 +47,11 @@ export async function main(ns) {
         ns.print("done");
     }
 
+    var sleeper = ns.getWeakenTime(target);
     await set_run(ns, target, percentage, 0, setLimit);
+    ns.print("sleeping til end of batch");
+    await ns.sleep(sleeper+5*1000)
+    ns.print("done");
 }
 
 export function autocomplete(data, args) {
