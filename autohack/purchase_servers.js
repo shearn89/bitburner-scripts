@@ -23,7 +23,12 @@ export async function main(ns) {
 			servers = ns.getPurchasedServers();
 			await ns.sleep(100);
 		}
+		if (servers.length >= limit) {
+			ns.print("reached limit of purchaseable servers, exiting");
+			break;
+		}
 		if (ns.args[0]) {
+			ns.print("breaker flag set, exiting");
 			break;
 		}
 		await ns.sleep(1000*60*3);
