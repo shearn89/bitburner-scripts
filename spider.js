@@ -91,7 +91,7 @@ export async function main(ns) {
 		await ns.write(targetFile, bestTarget, "w");
 		if (looper) {
 			// not at 5 ports yet, so not everything hacked.
-			await ns.sleep(1000*60*5);
+			await ns.sleep(1000*60*2);
 		} else {
 			return;
 		}

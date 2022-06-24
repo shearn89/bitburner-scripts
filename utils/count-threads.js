@@ -8,23 +8,27 @@ export async function main(ns) {
 
     const flags = get_flags(ns);
 
-	workers = ns.getPurchasedServers();
-	if (workers.length < 1) {
-		workers = ["home"];
-    } else {
-        if (flags['home']) {
-            ns.print("home flag set, including home in workers");
-            workers = workers.concat("home");
-        }
+	var workers = [];
+    if (flags['home']) {
+        ns.print("home flag set, including home in workers");
+        workers = workers.concat("home");
+    }
+    workers = workers.concat(ns.getPurchasedServers());
+    if (flags['breached']) {
+        ns.print("breached flag set, including breached nodes from spider_state");
+        var breached = ns.read("/data/spider_state.txt").split("\n");
+        workers = workers.concat(breached)
+    }
+    if (workers.length < 1) {
+        workers = ["home"];
     }
 
-	var script = ns.args[0];
-	var value = ns.args[1];
+	var value = 1.75+1.75+1.75+1.70
 	var total = 0;
 	for (let worker of workers) {
 		ns.print("target is:", worker);
 		if ((ns.hasRootAccess(worker)) && (worker != "darkweb")) {
-			var threads = Math.floor(ns.getServerMaxRam(worker)/script);
+			var threads = Math.floor(ns.getServerMaxRam(worker)/value);
 			ns.print(threads);
 			total += threads;
 		}

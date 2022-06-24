@@ -4,6 +4,8 @@ import { targets } from "/lib/constants";
 export async function main(ns) {
     ns.disableLog("ALL");
 
+    // SF4 - buy tor router, buy programs in order.
+
     // run spider.js, hack what we can. Should start with 3 exploits.
     var spiderPid = ns.run("/spider.js", 1);
     // give it a second

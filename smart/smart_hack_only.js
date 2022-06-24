@@ -3,18 +3,19 @@ import { get_hack_threads } from "/lib/analysis";
 
 import {
     hackScript,
+    get_flags
 } from "/lib/constants";
+
 
 /** @param {NS} ns */
 export async function main(ns) {
-    var target = ns.args[0];
-    var percentage = ns.args[1];
-    if (!target) {
-        ns.toast("must provide target");
+    const flags = get_flags(ns);
+    if (!flags) {
+        ns.tprint("failed to get flags");
+        return;
     }
-    if (!percentage) {
-        ns.toast("must provide percentage");
-    }
+    const target = flags['target'];
+    const percentage = flags['percentage'];
 
     var {hackThreads, weakenHackThreads} = get_hack_threads(ns, target, percentage);
 
@@ -23,6 +24,8 @@ export async function main(ns) {
     var delays = [0];
 
     ns.tprint("starting batch_run");
+    var weakenTime = ns.getWeakenTime(target);
     await batch_run(ns, target, scripts, counts, delays);
     ns.toast("launched");
+    await ns.sleep(weakenTime);
 }

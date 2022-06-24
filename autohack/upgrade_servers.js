@@ -18,12 +18,12 @@ export async function main(ns) {
 			// find smallest server
 			for (let server of servers) {
 				if (ns.ps(server).length > 0) {
-					ns.tprint("server is running scripts, skipping");
+					ns.print("server is running scripts, skipping");
 					continue;
 				}
 				var ram = ns.getServerMaxRam(server);
 
-				ns.tprint(`server: ${server}, ram: ${ram}, smallest: ${smallest}, smallestRam: ${smallestRam}`);
+				ns.print(`server: ${server}, ram: ${ram}, smallest: ${smallest}, smallestRam: ${smallestRam}`);
 				if (ram < smallestRam) {
 					smallest = server;
 					smallestRam = ram;
@@ -39,15 +39,23 @@ export async function main(ns) {
 				factor = 20;
 			}
 			if (smallestFactor > 20) {
-				ns.tprint("no more to upgrade");
+				ns.print("no more to upgrade");
 				return;
 			}
-			ns.tprint(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), factor is ${factor}, smallestFactor is ${smallestFactor}`);
+			ns.print(`found smallest server ${smallest}, with ${smallestRam} RAM (2^${Math.log2(smallestRam)}), factor is ${factor}, smallestFactor is ${smallestFactor}`);
 			if (ns.ps(smallest).length > 0) {
-				ns.tprint("server is running scripts, skipping");
+				ns.print("server is running scripts, skipping");
 			} else {
-				ns.tprint("deleting server");
-				ns.deleteServer(smallest);
+				ns.print("deleting server");
+				var cash = ns.getServerMoneyAvailable("home");
+				var ram = Math.pow(2, factor);
+				var purchaseCost = ns.getPurchasedServerCost(ram);
+				if (purchaseCost <= cash) {
+					ns.deleteServer(smallest);
+				} else {
+					ns.print("won't be able to afford, breaking");
+					break;
+				}
 			}
 			if (smallestFactor > factor) {
 				factor = smallestFactor;
@@ -62,7 +70,7 @@ export async function main(ns) {
 			if (purchaseCost <= cash) {
 				ns.purchaseServer(serverPrefix, ram);
 			} else {
-				ns.tprint("can't afford, exiting");
+				ns.print("can't afford, exiting");
 				return;
 			}
 			servers = ns.getPurchasedServers();

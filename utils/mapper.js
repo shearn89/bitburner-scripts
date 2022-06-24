@@ -1,9 +1,21 @@
+const mapperFlags = [
+    ['target', ""],
+    ['quiet', false],
+];
+
 /** @param {NS} ns */
 export async function main(ns) {
-    var servers = [];
+    var flags = ns.flags(mapperFlags);
 
-    var stack = [];
-    stack = stack.concat(ns.scan("home"));
+    var servers = [];
+    var scanner = true;
+    if (flags['target'] != "") {
+        var stack = [flags['target']]
+        scanner = false;
+    } else {
+        var stack = [];
+        stack = stack.concat(ns.scan("home"));
+    }
 
     var seen = ["home", "darkweb"].concat(ns.getPurchasedServers());
 
@@ -41,8 +53,10 @@ export async function main(ns) {
             "maxRam": maxRam,
         });
 
-        var newHosts = ns.scan(target);
-        stack = stack.concat(newHosts);
+        if (scanner) {
+            var newHosts = ns.scan(target);
+            stack = stack.concat(newHosts);
+        }
     }
 
     var running_targets = get_running_targets(ns)
@@ -64,8 +78,9 @@ function print_servers(ns, servers, running_targets){
 
     var myLevel = ns.getHackingLevel();
 
+    // TODO: print padding etc.
     ns.tprintf('OKAY |      SERVER        |           CASH        | +S | LVL  | P |   G  | ROOT  | RAM');
-    ns.tprintf('-----|--------------------|-----------------------|----|------|---|------|-------|-----');
+    ns.tprintf(`-----|--------------------|-----------------------|----|------|---|------|-------|-----`);
     for (let server of servers) {
         var serverName = server['server']
         var isTarget = running_targets.includes(serverName);
@@ -89,6 +104,8 @@ function get_running_targets(ns) {
 }
 
 function print_server(ns, server, longServer, longCash, myLevel, isTarget){
+    var flags = ns.flags(mapperFlags);
+
     var target = server['server'];
     var currentCash = server['currentCash'];
     var cash = server['cash'];
@@ -105,7 +122,10 @@ function print_server(ns, server, longServer, longCash, myLevel, isTarget){
     var prefix = "    ";
     if (isTarget) {
         prefix = "INFO";
-    } else if (level > myLevel/2) {
+    } else if ((level > myLevel/2) || (!root)) {
+        if (flags['quiet']) {
+            return;
+        }
         prefix = "WARN"
     }
     ns.tprintf(`${prefix} | ${target}${" ".repeat(namePadding)}| ${" ".repeat(cashPadding)}${cash} (${String(Math.round(currentCash/cash*100) || 0).padStart(3, ' ')}%%) | ${String(secLevel-minSecLevel).padStart(2, ' ')} | ${String(level).padStart(4, ' ')} | ${ports} | ${String(growth).padStart(4, ' ')} | ${String(root).padStart(5, ' ')} | ${ram}`)
