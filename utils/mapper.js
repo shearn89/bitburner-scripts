@@ -60,7 +60,6 @@ export async function main(ns) {
     }
 
     var running_targets = get_running_targets(ns)
-    ns.tprint(running_targets)
     print_servers(ns, servers, running_targets) 
 }
 

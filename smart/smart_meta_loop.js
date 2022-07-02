@@ -23,7 +23,6 @@ export async function main(ns) {
     // check server is prepped
     while (true) {
         var looper = true
-        var sleepTime = ns.getWeakenTime(target) + buffer*2 + 5000;
         while (looper) {
             var weakenTime = ns.getWeakenTime(target);
             var cash = Math.floor(ns.getServerMoneyAvailable(target));
@@ -62,9 +61,9 @@ export async function main(ns) {
             }
         }
         // ns.print("starting set run");
-        var weakenTime = ns.getWeakenTime(target);
         await set_run(ns, target, percentage, 0, setLimit);
         // just launched a set (last batch), so wait a whole weakenTime + 2 buffers + headroom
+        var sleepTime = ns.getWeakenTime(target)*1.05 + buffer*2;
         ns.print(`sleeping in smart_meta_loop for ${sleepTime}`);
         await ns.sleep(sleepTime);
         var max = ns.getServerMaxMoney(target);

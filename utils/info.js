@@ -6,7 +6,8 @@ import {
 
 /** @param {NS} ns */
 export async function main(ns) {
-    get_running_targets(ns);
+    var list = ns.getOwnedSourceFiles();
+    ns.tprint(list);
 }
 
 function get_running_targets(ns) {

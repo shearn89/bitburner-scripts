@@ -6,6 +6,7 @@ export async function main(ns) {
 	// TODO: improve this, check how long it takes to pay back.
 
 	var ok;
+	var upgradesNeeded = false;
 	while (true) {
 		ns.print("checking existing nodes");
 		for (let i=0; i<nodeCount; i++) {
@@ -17,8 +18,10 @@ export async function main(ns) {
 				ok = ns.hacknet.upgradeLevel(nodeNumber, levelUpgrade);
 				if (!ok) {
 					ns.print("couldn't upgrade level to max");
+					upgradesNeeded = true;
 					continue;
 				}
+				upgradesNeeded = false;
 				ns.print("maxed level");
 			}
 			
@@ -27,8 +30,10 @@ export async function main(ns) {
 				ok = ns.hacknet.upgradeRam(nodeNumber, ramUpgrade);
 				if (!ok) {
 					ns.print("couldn't upgrade ram to max");
+					upgradesNeeded = true;
 					continue;
 				}
+				upgradesNeeded = false;
 				ns.print("maxed ram");
 			}
 			
@@ -38,8 +43,10 @@ export async function main(ns) {
 				ok = ns.hacknet.upgradeCore(nodeNumber, coreUpgrade);
 				if (!ok) {
 					ns.print("couldn't upgrade core to max");
+					upgradesNeeded = true;
 					continue;
 				}
+				upgradesNeeded = false;
 				ns.print("maxed cores");
 			}
 		}
@@ -79,11 +86,11 @@ export async function main(ns) {
 			ns.print("bought and upgraded, trying again");
 			nodeCount = ns.hacknet.numNodes();
 		}
-		if (ns.args[0]) {
+		if ((ns.args[0]) || (!upgradesNeeded && (nodeCount >= nodeLimit))) {
 			ns.tprint("exiting...");
 			break;
 		}
-		await ns.sleep(1000*60*60);
+		await ns.sleep(1000*60*10);
 	}
 }
 

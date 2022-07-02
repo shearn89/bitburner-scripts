@@ -36,6 +36,7 @@ export async function main(ns) {
 
 			if (ns.hasRootAccess(target)) {
 				hacked.push(target);
+				await setup_backdoor(ns, target);
 			}
 			if (!ns.hasRootAccess(target)) {
 				ns.print("no root access on ", target, ", attempting breach");
@@ -67,9 +68,7 @@ export async function main(ns) {
 
 				if (ports >= reqPorts) {
 					ns.nuke(target);
-					// if (!target.backdoorInstalled) {
-					// 	ns.installBackdoor();
-					// }
+					await setup_backdoor(ns, target);
 					hacked.push(target);
 					ns.print("BREACHED");
 				} else {
@@ -94,6 +93,25 @@ export async function main(ns) {
 			await ns.sleep(1000*60*2);
 		} else {
 			return;
+		}
+	}
+}
+
+async function setup_backdoor(ns, target) {
+	return
+	// TODO: fix this, have to connect in sequence.
+	if (!target.backdoorInstalled) {
+		try {
+			ns.print(`installing backdoor on ${target}`);
+			var success = ns.singularity.connect(target);
+			if (success) {
+				await ns.singularity.installBackdoor(target);
+			} else {
+				ns.print(`couldn't connect to ${target}`);
+			}
+		} catch {
+			ns.print(`SF4 not found, skipping`);
+			// do nothing
 		}
 	}
 }

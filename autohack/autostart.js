@@ -4,6 +4,7 @@ import { targets } from "/lib/constants";
 export async function main(ns) {
     ns.disableLog("ALL");
 
+    // SF4 - study computer science at university
     // SF4 - buy tor router, buy programs in order.
 
     // run spider.js, hack what we can. Should start with 3 exploits.
